@@ -307,6 +307,8 @@ input:focus, .input-select:focus {
 /* Table */
 .table-wrapper {
     overflow-x: auto;
+    max-height: 320px;
+    overflow-y: auto;
     border-radius: 12px;
 }
 
@@ -327,6 +329,10 @@ th {
     font-weight: 700;
     font-size: 0.75rem;
     text-transform: uppercase;
+    position: sticky;
+    top: 0;
+    background: var(--card-bg);
+    z-index: 10;
 }
 
 tbody tr:hover {

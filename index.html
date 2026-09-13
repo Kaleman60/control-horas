@@ -62,57 +62,28 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="notas">Cliente</label>
-                    <input type="text" id="notas" placeholder=" Nombre del cliente">
+                <!-- Nuevas casillas separadas -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cliente">Cliente</label>
+                        <input type="text" id="cliente" placeholder="Ej: Juan Pérez">
+                    </div>
+                    <div class="form-group">
+                        <label for="servicio">Servicio</label>
+                        <input type="text" id="servicio" placeholder="Ej: Limpieza de hogar">
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-submit">Guardar Jornada</button>
             </form>
         </div>
 
-        <!-- Sección 2: Planificador de Tareas / Calendario -->
+        <!-- Sección 2: Próximas Tareas -->
         <div id="tareas-section" class="tab-content">
-            <form id="task-form" class="form-container">
-                <h2>Planificar Nueva Tarea</h2>
-                
-                <div class="form-group">
-                    <label for="task-nombre">Nombre de la Tarea / Proyecto</label>
-                    <input type="text" id="task-nombre" placeholder="Ej: Limpieza o Ayuda a Domicilio" required>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="task-fecha">Fecha Programada</label>
-                        <input type="date" id="task-fecha" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="task-tipo-pago">Tipo de Pago</label>
-                        <select id="task-tipo-pago" class="input-select">
-                            <option value="por_hora">Por Horas Estimadas</option>
-                            <option value="fijo">Precio Fijo Total</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group" id="group-horas-est">
-                        <label for="task-horas">Horas Estimadas</label>
-                        <input type="number" id="task-horas" step="0.5" min="0.5" value="2" placeholder="Ej: 4">
-                    </div>
-                    <div class="form-group">
-                        <label id="label-precio-tarea" for="task-precio">Precio por Hora (€ o $)</label>
-                        <input type="number" id="task-precio" step="0.01" min="0" placeholder="Ej: 15.00" required>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-submit">Programar Tarea</button>
-            </form>
-
             <div class="history-container">
-                <h2>Lista de Tareas Pendientes y Realizadas</h2>
+                <h2>Próximas Jornadas / Tareas Programadas</h2>
                 <div id="lista-tareas" class="tasks-list">
-                    <!-- Tareas cargadas dinámicamente -->
+                    <!-- Las tareas se muestran aquí automáticamente -->
                 </div>
             </div>
         </div>
@@ -125,9 +96,10 @@
                     <thead>
                         <tr>
                             <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Servicio</th>
                             <th>Horas</th>
                             <th>Ganado</th>
-                            <th>Cliente</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
