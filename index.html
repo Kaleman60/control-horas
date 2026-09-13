@@ -70,7 +70,7 @@
                     </div>
                     <div class="form-group">
                         <label for="servicio">Servicio</label>
-                        <input type="text" id="servicio" placeholder="Ej: Limpieza de hogar">
+                        <input type="text" id="servicio" placeholder="Ej: Limpieza de hogar, Ayuda a domicilio">
                     </div>
                 </div>
 
@@ -90,7 +90,18 @@
 
         <!-- Historial General de Registros -->
         <div class="history-container">
-            <h2>Historial de Registros Realizados</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <h2>Historial de Registros Realizados</h2>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <input type="text" id="buscar-cliente" placeholder="🔍 Buscar cliente..." class="input-select" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #ccc;">
+                    
+                    <select id="orden-historial" class="input-select" style="padding: 6px 10px; border-radius: 6px;">
+                        <option value="reciente">Más reciente primero</option>
+                        <option value="antiguo">Más antiguo primero</option>
+                    </select>
+                </div>
+            </div>
+            
             <div class="table-wrapper">
                 <table>
                     <thead>

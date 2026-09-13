@@ -27,6 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const groupHorasEst = document.getElementById('group-horas-est');
     const labelPrecioTarea = document.getElementById('label-precio-tarea');
 
+    // Elementos de Búsqueda y Ordenación
+    const ordenSelect = document.getElementById('orden-historial');
+    const buscarClienteInput = document.getElementById('buscar-cliente');
+
+    // Escuchadores de eventos para Búsqueda y Orden
+    if (ordenSelect) {
+        ordenSelect.addEventListener('change', actualizarInterfaz);
+    }
+    if (buscarClienteInput) {
+        buscarClienteInput.addEventListener('input', actualizarInterfaz);
+    }
+
     // Fecha predeterminada (Hoy local YYYY-MM-DD)
     const hoyObj = new Date();
     const hoyStr = hoyObj.getFullYear() + '-' + 
@@ -73,13 +85,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const descansoMin = parseInt(document.getElementById('descanso').value) || 0;
             const tarifa = parseFloat(document.getElementById('tarifa').value) || 0;
             
-            // Nuevos campos Cliente y Servicio (con fallback a campos anteriores si existían)
             const clienteEl = document.getElementById('cliente');
             const servicioEl = document.getElementById('servicio');
             const clienteVal = clienteEl ? clienteEl.value.trim() : 'Sin cliente';
             const servicioVal = servicioEl ? servicioEl.value.trim() : 'Servicio General';
 
-            // Cálculo exacto de minutos y horas
             const [hInicio, mInicio] = horaInicio.split(':').map(Number);
             const [hFin, mFin] = horaFin.split(':').map(Number);
             let minTotales = (hFin * 60 + mFin) - (hInicio * 60 + mInicio) - descansoMin;
@@ -94,9 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             localStorage.setItem('ultima_tarifa', tarifa);
 
-            // Comparación de fechas segura sin desfase de zona horaria
             if (fecha > hoyStr) {
-                // FECHA FUTURA -> Guardar en Próximas Tareas
                 const nuevaTarea = {
                     id: Date.now(),
                     nombre: servicioVal,
@@ -111,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 tareas.unshift(nuevaTarea);
             } else {
-                // FECHA HOY O PASADA -> Guardar en Historial
                 registros.unshift({
                     id: Date.now(),
                     fecha,
@@ -124,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             guardarYActualizar();
             
-            // Limpieza de campos
             document.getElementById('hora-inicio').value = '';
             document.getElementById('hora-fin').value = '';
             document.getElementById('descanso').value = '0';
@@ -184,29 +190,46 @@ document.addEventListener('DOMContentLoaded', () => {
             let totalHoras = 0;
             let totalDinero = 0;
 
+            const orden = ordenSelect ? ordenSelect.value : 'reciente';
+            const textoBusqueda = buscarClienteInput ? buscarClienteInput.value.toLowerCase().trim() : '';
+
+            // Filtrar registros por nombre de cliente
+            let registrosFiltrados = registros.filter(reg => {
+                const cliente = (reg.cliente || '').toLowerCase();
+                return cliente.includes(textoBusqueda);
+            });
+
+            // Ordenar el historial
+            registrosFiltrados.sort((a, b) => {
+                if (orden === 'antiguo') {
+                    return a.fecha.localeCompare(b.fecha) || a.id - b.id;
+                } else {
+                    return b.fecha.localeCompare(a.fecha) || b.id - a.id;
+                }
+            });
+
+            // Acumular totales
             registros.forEach(reg => {
                 totalHoras += reg.horas;
                 totalDinero += reg.ganado;
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${formatearFecha(reg.fecha)}</td>
-                    <td>${reg.cliente || '-'}</td>
-                    <td>${reg.servicio || reg.notas || '-'}</td>
-                    <td>${reg.horas.toFixed(2)} h</td>
-                    <td>€${reg.ganado.toFixed(2)}</td>
-                    <td><button class="btn-delete" onclick="eliminarRegistro(${reg.id})">🗑️</button></td>
-                `;
-                registrosTabla.appendChild(tr);
             });
 
-            // Sumar tareas completadas
-            tareas.forEach(t => {
-                if (t.completada) {
-                    totalDinero += t.totalCalculado || t.ganado || 0;
-                    totalHoras += t.horasEstimadas || t.horas || 0;
-                }
-            });
+            if (registrosFiltrados.length === 0) {
+                registrosTabla.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted); padding: 15px;">No hay registros encontrados.</td></tr>`;
+            } else {
+                registrosFiltrados.forEach(reg => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${formatearFecha(reg.fecha)}</td>
+                        <td>${reg.cliente || '-'}</td>
+                        <td>${reg.servicio || reg.notas || '-'}</td>
+                        <td>${reg.horas.toFixed(2)} h</td>
+                        <td>€${reg.ganado.toFixed(2)}</td>
+                        <td><button class="btn-delete" onclick="eliminarRegistro(${reg.id})">🗑️</button></td>
+                    `;
+                    registrosTabla.appendChild(tr);
+                });
+            }
 
             if (totalHorasEl) totalHorasEl.textContent = `${totalHoras.toFixed(2)} hrs`;
             if (totalDineroEl) totalDineroEl.textContent = `€${totalDinero.toFixed(2)}`;
@@ -218,7 +241,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tareas.length === 0) {
                 listaTareas.innerHTML = '<p style="text-align:center; color: var(--text-muted); padding: 10px;">No hay tareas programadas.</p>';
             } else {
-                tareas.forEach(t => {
+                let tareasOrdenadas = [...tareas].sort((a, b) => a.fecha.localeCompare(b.fecha));
+
+                tareasOrdenadas.forEach(t => {
                     const div = document.createElement('div');
                     div.className = `task-card ${t.completada ? 'completed' : ''}`;
                     const monto = t.totalCalculado !== undefined ? t.totalCalculado : (t.ganado || 0);
@@ -244,14 +269,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Marcar tarea como completada -> Se elimina de tareas y pasa al historial
     window.toggleTarea = (id) => {
-        tareas = tareas.map(t => {
-            if (t.id === id) {
-                return { ...t, completada: !t.completada };
-            }
-            return t;
-        });
-        guardarYActualizar();
+        const tareaCompletada = tareas.find(t => t.id === id);
+        
+        if (tareaCompletada) {
+            // Se remueve de Próximas Tareas
+            tareas = tareas.filter(t => t.id !== id);
+
+            // Se añade al Historial General de Registros
+            registros.unshift({
+                id: Date.now(),
+                fecha: tareaCompletada.fecha,
+                cliente: tareaCompletada.cliente || 'General',
+                servicio: tareaCompletada.nombre || tareaCompletada.servicio || 'Tarea Programada',
+                horas: tareaCompletada.horasEstimadas || 0,
+                ganado: tareaCompletada.totalCalculado !== undefined ? tareaCompletada.totalCalculado : (tareaCompletada.ganado || 0)
+            });
+
+            guardarYActualizar();
+        }
     };
 
     window.eliminarRegistro = (id) => {
