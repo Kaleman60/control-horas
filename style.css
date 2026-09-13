@@ -3,8 +3,6 @@
     --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     --accent: #10b981;
     --accent-gradient: linear-gradient(135deg, #34d399 0%, #059669 100%);
-    --bg-start: #0f172a;
-    --bg-end: #1e1b4b;
     --card-bg: rgba(255, 255, 255, 0.92);
     --text: #0f172a;
     --text-muted: #64748b;
@@ -20,7 +18,6 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Fondo dinámico con degradado y formas flotantes */
 body {
     background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 50%, #fce7f3 100%);
     background-attachment: fixed;
@@ -34,9 +31,7 @@ body {
     overflow-x: hidden;
 }
 
-/* Formas decorativas animadas en el fondo */
-body::before,
-body::after {
+body::before, body::after {
     content: "";
     position: fixed;
     border-radius: 50%;
@@ -68,39 +63,30 @@ body::after {
     100% { transform: translate(30px, 40px) scale(1.1); }
 }
 
-/* Contenedor principal con efecto de aparición */
 .container {
     width: 100%;
-    max-width: 520px;
+    max-width: 540px;
     position: relative;
     z-index: 1;
     animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 h1 {
     text-align: center;
-    margin-bottom: 24px;
-    font-size: 2rem;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
     font-weight: 800;
     background: var(--primary-gradient);
-    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -0.5px;
 }
 
-/* Tarjetas con efecto Neumorfismo / Glassmorphism */
 .dashboard {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -115,13 +101,12 @@ h1 {
     border-radius: var(--radius);
     border: 1px solid var(--border);
     text-align: center;
-    box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.1);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .card:hover {
     transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 15px 30px -5px rgba(99, 102, 241, 0.2);
 }
 
 .card h3 {
@@ -141,12 +126,46 @@ h1 {
 
 .card.highlight p {
     background: var(--accent-gradient);
-    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-/* Formularios y Secciones */
+/* Tabs */
+.tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: 1px solid var(--border);
+}
+
+.tab-btn.active {
+    background: #ffffff;
+    color: var(--primary);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+    border-color: var(--primary);
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
 .form-container, .history-container {
     background: var(--card-bg);
     backdrop-filter: blur(12px);
@@ -158,7 +177,7 @@ h1 {
 }
 
 h2 {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     margin-bottom: 18px;
     font-weight: 700;
     color: var(--text);
@@ -185,7 +204,7 @@ label {
     letter-spacing: 0.5px;
 }
 
-input {
+input, .input-select {
     padding: 12px 14px;
     border: 2px solid rgba(203, 213, 225, 0.6);
     border-radius: 12px;
@@ -195,14 +214,12 @@ input {
     background: rgba(255, 255, 255, 0.8);
 }
 
-input:focus {
+input:focus, .input-select:focus {
     border-color: var(--primary);
     background: #ffffff;
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
-    transform: translateY(-1px);
 }
 
-/* Botón con animación de pulsación */
 .btn-submit {
     width: 100%;
     padding: 14px;
@@ -213,21 +230,81 @@ input:focus {
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.3s ease;
     margin-top: 6px;
     box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
 }
 
 .btn-submit:hover {
-    transform: translateY(-2px) scale(1.01);
+    transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(99, 102, 241, 0.45);
 }
 
-.btn-submit:active {
-    transform: translateY(1px) scale(0.98);
+/* Tasks list styling */
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-/* Tabla con hover animado */
+.task-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.25s ease;
+}
+
+.task-card.completed {
+    background: rgba(241, 245, 249, 0.7);
+    border-color: #cbd5e1;
+    opacity: 0.85;
+}
+
+.task-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.task-checkbox {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+.task-details h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.task-card.completed .task-details h4 {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+.task-details p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.task-amount {
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--primary);
+}
+
+.task-card.completed .task-amount {
+    color: var(--accent);
+}
+
+/* Table */
 .table-wrapper {
     overflow-x: auto;
     border-radius: 12px;
@@ -250,34 +327,21 @@ th {
     font-weight: 700;
     font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-tbody tr {
-    transition: all 0.2s ease;
-    animation: fadeInRow 0.4s ease forwards;
-}
-
-@keyframes fadeInRow {
-    from { opacity: 0; transform: translateX(-10px); }
-    to { opacity: 1; transform: translateX(0); }
 }
 
 tbody tr:hover {
     background-color: rgba(241, 245, 249, 0.7);
-    transform: scale(1.01);
 }
 
-/* Botón eliminar con feedback */
 .btn-delete {
     background: #fee2e2;
     border: none;
     color: var(--danger);
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -287,5 +351,4 @@ tbody tr:hover {
 .btn-delete:hover {
     background: var(--danger);
     color: white;
-    transform: scale(1.1) rotate(6deg);
 }
