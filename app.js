@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     cliente: clienteVal,
                     servicio: servicioVal,
                     horas,
+                    tarifa,
                     ganado
                 });
             }
@@ -215,16 +216,27 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (registrosFiltrados.length === 0) {
-                registrosTabla.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted); padding: 15px;">No hay registros encontrados.</td></tr>`;
+                registrosTabla.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-muted); padding: 15px;">No hay registros encontrados.</td></tr>`;
             } else {
                 registrosFiltrados.forEach(reg => {
+                    // Obtener tarifa guardada o calcularla
+                    const tarifaActual = reg.tarifa !== undefined ? reg.tarifa : (reg.horas > 0 ? (reg.ganado / reg.horas) : 0);
+
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${formatearFecha(reg.fecha)}</td>
                         <td>${reg.cliente || '-'}</td>
                         <td>${reg.servicio || reg.notas || '-'}</td>
                         <td>${reg.horas.toFixed(2)} h</td>
-                        <td>€${reg.ganado.toFixed(2)}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <input type="number" step="0.5" min="0" value="${tarifaActual.toFixed(2)}" 
+                                    onchange="cambiarTarifaRegistro(${reg.id}, this.value)" 
+                                    style="width: 65px; padding: 4px; border-radius: 4px; border: 1px solid #ccc; text-align: center;">
+                                <span>€/h</span>
+                            </div>
+                        </td>
+                        <td><strong>€${reg.ganado.toFixed(2)}</strong></td>
                         <td><button class="btn-delete" onclick="eliminarRegistro(${reg.id})">🗑️</button></td>
                     `;
                     registrosTabla.appendChild(tr);
@@ -269,22 +281,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Recalcular el dinero ganado al cambiar la tarifa en la tabla
+    window.cambiarTarifaRegistro = (id, nuevaTarifa) => {
+        const tarifaNum = parseFloat(nuevaTarifa) || 0;
+        registros = registros.map(reg => {
+            if (reg.id === id) {
+                const nuevoGanado = reg.horas * tarifaNum;
+                return {
+                    ...reg,
+                    tarifa: tarifaNum,
+                    ganado: nuevoGanado
+                };
+            }
+            return reg;
+        });
+        guardarYActualizar();
+    };
+
     // Marcar tarea como completada -> Se elimina de tareas y pasa al historial
     window.toggleTarea = (id) => {
         const tareaCompletada = tareas.find(t => t.id === id);
         
         if (tareaCompletada) {
-            // Se remueve de Próximas Tareas
             tareas = tareas.filter(t => t.id !== id);
 
-            // Se añade al Historial General de Registros
+            const tarifaTarea = tareaCompletada.precio || 0;
+            const ganadoTarea = tareaCompletada.totalCalculado !== undefined ? tareaCompletada.totalCalculado : (tareaCompletada.ganado || 0);
+
             registros.unshift({
                 id: Date.now(),
                 fecha: tareaCompletada.fecha,
                 cliente: tareaCompletada.cliente || 'General',
                 servicio: tareaCompletada.nombre || tareaCompletada.servicio || 'Tarea Programada',
                 horas: tareaCompletada.horasEstimadas || 0,
-                ganado: tareaCompletada.totalCalculado !== undefined ? tareaCompletada.totalCalculado : (tareaCompletada.ganado || 0)
+                tarifa: tarifaTarea,
+                ganado: ganadoTarea
             });
 
             guardarYActualizar();
