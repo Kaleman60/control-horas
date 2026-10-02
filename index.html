@@ -94,6 +94,11 @@
                 <h2>Historial de Registros Realizados</h2>
                 <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <input type="text" id="buscar-cliente" placeholder="🔍 Buscar cliente..." class="input-select" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #ccc;">
+
+                    <!-- NUEVO: Filtro por mes -->
+                    <select id="filtro-mes" class="input-select" style="padding: 6px 10px; border-radius: 6px;">
+                        <option value="todos">Todos los meses</option>
+                    </select>
                     
                     <select id="orden-historial" class="input-select" style="padding: 6px 10px; border-radius: 6px;">
                         <option value="reciente">Más reciente primero</option>
@@ -102,6 +107,13 @@
                 </div>
             </div>
             
+            <!-- NUEVO: Cambiar precio/hora de todo el historial -->
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
+                <label for="nuevo-precio-historial">Cambiar precio/hora del mes seleccionado:</label>
+                <input type="number" id="nuevo-precio-historial" step="0.01" min="0" placeholder="Ej: 10" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #ccc; width: 90px;">
+                <button type="button" id="btn-aplicar-precio" class="btn-submit" style="width: auto; padding: 6px 14px;">Aplicar</button>
+            </div>
+
             <div class="table-wrapper">
                 <table>
                     <thead>

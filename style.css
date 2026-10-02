@@ -360,3 +360,162 @@ tbody tr:hover {
     background: var(--danger);
     color: white;
 }
+
+/* =========================================================
+   NUEVO: FECHA MÁS BONITA Y TAREAS FUTURAS MEJORADAS
+   ========================================================= */
+
+/* --- Fecha en la tabla del historial --- */
+th, td { white-space: nowrap; }
+
+.fecha-chip {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+tbody tr { transition: background-color 0.2s ease; }
+
+/* --- Tareas futuras --- */
+.tasks-list { gap: 14px; }
+
+.task-card {
+    border-left: 5px solid var(--primary);
+    padding: 14px 14px 14px 12px;
+    gap: 10px;
+    box-shadow: 0 6px 16px -6px rgba(99, 102, 241, 0.25);
+}
+
+.task-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px -8px rgba(99, 102, 241, 0.35);
+}
+
+.task-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-details { min-width: 0; }
+
+.task-details h4 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.task-details p {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    white-space: normal;
+}
+
+/* Bloque tipo calendario: día grande + mes pequeño */
+.task-date {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 54px;
+    padding: 8px 6px;
+    border-radius: 14px;
+    background: var(--primary-gradient);
+    color: #ffffff;
+    line-height: 1.1;
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.35);
+}
+
+.task-date .dia {
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.task-date .mes {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Etiqueta: Hoy / Mañana / En X días */
+.task-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: rgba(99, 102, 241, 0.12);
+    color: var(--primary);
+}
+
+.task-badge.hoy {
+    background: rgba(16, 185, 129, 0.15);
+    color: #059669;
+}
+
+.task-badge.vencida {
+    background: rgba(239, 68, 68, 0.12);
+    color: var(--danger);
+}
+
+/* Importe y botones de acción */
+.task-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.task-amount {
+    font-size: 1.05rem;
+    margin-right: 4px;
+}
+
+.btn-done {
+    background: #d1fae5;
+    border: none;
+    color: #059669;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.btn-done:hover {
+    background: var(--accent);
+    color: #ffffff;
+    transform: scale(1.08);
+}
+
+.task-actions .btn-delete {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+}
+
+.tasks-empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 24px 10px;
+    font-size: 0.9rem;
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+}
+
+/* Móvil: la acción baja debajo si no cabe */
+@media (max-width: 420px) {
+    .task-card { flex-wrap: wrap; }
+    .task-actions { width: 100%; justify-content: flex-end; }
+}
