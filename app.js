@@ -132,6 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     nombre: servicioVal,
                     cliente: clienteVal,
                     fecha,
+                    horaInicio,
+                    horaFin,
                     tipoPago: 'por_hora',
                     horasEstimadas: horas,
                     precio: tarifa,
@@ -146,6 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     fecha,
                     cliente: clienteVal,
                     servicio: servicioVal,
+                    horaInicio,
+                    horaFin,
                     horas,
                     tarifa,
                     ganado
@@ -295,6 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${reg.horas.toFixed(2)}</td>
                     <td>${reg.tarifa.toFixed(2)}</td>
                     <td>${reg.ganado.toFixed(2)}</td>
+                    <td><button type="button" class="btn-delete" title="Eliminar" data-accion="borrar-registro" data-id="${reg.id}">🗑️</button></td>
                 `;
                 registrosTabla.appendChild(tr);
             });
@@ -408,6 +413,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (registrosTabla) {
         registrosTabla.style.cursor = 'pointer';
         registrosTabla.addEventListener('click', (e) => {
+            // Eliminar un registro del historial
+            const btnBorrar = e.target.closest('button[data-accion="borrar-registro"]');
+            if (btnBorrar) {
+                const id = Number(btnBorrar.dataset.id);
+                const reg = registros.find(r => r.id === id);
+                if (!reg) return;
+                if (confirm(`¿Eliminar este registro?\n\n${formatearFecha(reg.fecha)} · ${reg.cliente} · ${reg.servicio}\n${reg.horas.toFixed(2)} h · ${reg.ganado.toFixed(2)} €`)) {
+                    registros = registros.filter(r => r.id !== id);
+                    guardarYActualizar();
+                }
+                return;
+            }
+
             const tr = e.target.closest('tr');
             if (!tr || !tr.dataset.id) return;
             const reg = registros.find(r => r.id === Number(tr.dataset.id));
@@ -415,11 +433,30 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(
                 `📅 ${reg.fecha}\n` +
                 `👤 ${reg.cliente}\n` +
-                `🧹 ${reg.servicio}\n\n` +
+                `🧹 ${reg.servicio}\n` +
+                `🕒 Horario: ${reg.horaInicio && reg.horaFin ? reg.horaInicio + ' a ' + reg.horaFin : 'no registrado'}\n\n` +
                 `⏱️ Horas: ${reg.horas.toFixed(2)} (${formatoHoras(reg.horas)})\n` +
                 `💶 Precio/hora: ${reg.tarifa.toFixed(2)} €\n` +
                 `💰 Ganado: ${reg.ganado.toFixed(2)} €`
             );
+
+            // Si es un registro viejo sin horario, permitir agregarlo
+            if (!reg.horaInicio || !reg.horaFin) {
+                if (!confirm('Este registro no tiene horario guardado.\n¿Quieres agregarlo ahora?')) return;
+                const valida = (t) => /^([01]?\d|2[0-3]):[0-5]\d$/.test((t || '').trim());
+                const fmt = (t) => t.trim().padStart(5, '0');
+                const ini = prompt('Hora de inicio (formato 24h, ej: 09:00):');
+                if (ini === null) return;
+                const fin = prompt('Hora de fin (formato 24h, ej: 10:30):');
+                if (fin === null) return;
+                if (!valida(ini) || !valida(fin)) {
+                    alert('Formato no válido. Usa HH:MM, por ejemplo 09:00.');
+                    return;
+                }
+                reg.horaInicio = fmt(ini);
+                reg.horaFin = fmt(fin);
+                guardarYActualizar();
+            }
         });
     }
 
@@ -438,6 +475,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     fecha: tarea.fecha,
                     cliente: tarea.cliente,
                     servicio: tarea.nombre,
+                    horaInicio: tarea.horaInicio,
+                    horaFin: tarea.horaFin,
                     horas: tarea.horasEstimadas,
                     tarifa: tarea.precio,
                     ganado: tarea.totalCalculado
